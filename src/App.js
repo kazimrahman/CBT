@@ -3,6 +3,9 @@ import GoogleLogin from "react-google-login";
 import { GoogleLogout } from "react-google-login";
 import logo from './logo.svg';
 import './App.css';
+import axios from 'axios'
+
+var apiEndpoint = 'http://localhost:5000'
 
 class App extends React.Component {
   constructor(props){
@@ -20,15 +23,27 @@ class App extends React.Component {
     //this.onSuccess = this.onSuccess.bind(this)
     //this.onSignIn = this.onSignIn.bind(this)
   }
+  
 
-  responseGoogle = (response) => {
+  responseGoogleSuccess = (response) => {
     console.log("yeee")
-    this.setState({userDetails: response.profileObj, isSignedIn: true });
+    this.setState({userDetails: response.profileObj, isSignedIn: true});
+    axios.post(apiEndpoint + '/users/' + this.state.userDetails.email,  {"first_name": this.state.userDetails.givenName, "last_name": this.state.userDetails.familyName})
+      .then(res => {
+        console.log(res.data);
+        //this.setState({ persons });
+      })
+    
   };
 
   logout = () => {
     this.setState({isSignedIn: false, userDetails:{}})
   };
+
+  handleSubmit = (event) => {
+    console.log(this.state.userDetails)
+    event.preventDefault();
+  }
 
   checkSignedIn = () => {
     console.log("we in here", this.state.isSignedIn)
@@ -45,7 +60,7 @@ class App extends React.Component {
             Log in with Google
           </button>
         )}
-        onSuccess={this.responseGoogle}
+        onSuccess={this.responseGoogleSuccess}
         onFailure={this.responseGoogle}
       />
       )
@@ -75,6 +90,16 @@ class App extends React.Component {
           </div>
           <div className="email"><i>{this.state.userDetails.email}</i></div>
         </div>
+
+        <div>
+          hi how are ya
+          <form onClick={this.handleSubmit}>
+            <input type="text" id="fname" name="fname"/>
+            <input type="submit" value ="Submittaroon"/>
+          </form>
+        </div>
+
+
         <div className="bar" />
         <div className="stand" />
       </div>
