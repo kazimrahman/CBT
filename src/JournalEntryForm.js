@@ -1,6 +1,8 @@
 import React from 'react';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form'
+import Delete from './Delete'
 import axios from 'axios'
 var apiEndpoint = 'http://localhost:5000'
 
@@ -18,6 +20,11 @@ class JournalEntryForm extends React.Component {
 
     componentDidMount = () => {
         this.fetchEntries()
+    }
+
+    handleChildChange = () => {
+        this.fetchEntries()
+        console.log(this.state.entries)
     }
 
 
@@ -40,7 +47,6 @@ class JournalEntryForm extends React.Component {
             
             axios.post(apiEndpoint + '/journalentries/' + this.state.user,  form_data)
                 .then(res => {
-                    console.log(res.data);
                     this.fetchEntries()
                 }
             )
@@ -51,7 +57,6 @@ class JournalEntryForm extends React.Component {
     fetchEntries = () => {
         axios.get(apiEndpoint + '/journalentries/' + this.state.user)
             .then(res => {
-                console.log(res.data)
                 if(res.data.length > 0 && res.data.length != this.state.entries.length){
                     this.setState({entries: res.data.reverse()}, () => this.forceUpdate())
                 }
@@ -63,25 +68,36 @@ class JournalEntryForm extends React.Component {
         console.log("poop")
     }
 
+    prettyDate = (date) => {
+        var new_date = new Date(Date.parse(date))
+
+        //return month + " " + day + ", " + year
+        new_date = new_date.toString()
+        return new_date.substring(0, new_date.indexOf("GMT"))
+        //return new_date
+    }
+
     renderEntries = () => {
         return (
         <div>
-            <Table striped bordered hover>
+            <Table striped bordered hover align="right">
                 <thead>
                     <tr>
                     <th>Title</th>
                     <th>Situation</th>
                     <th>Date Logged</th>
+                    <th>Delete</th>
                     </tr>
                     
                 </thead>
                 <tbody>
                     {
                     Object.keys(this.state.entries).map((value,index)=>(
-                        <tr onClick={this.expand}>
-                            <td width="20%">{this.state.entries[value].title} </td>
+                        <tr>
+                            <td width="25%">{this.state.entries[value].title}</td>
                             <td width="50%">{this.state.entries[value].situation}</td>
-                            <td width="30%">{this.state.entries[value].date_logged}</td>
+                            <td width="20%">{this.prettyDate(this.state.entries[value].date_logged)}</td>
+                            <td width="5%"><Delete entry={this.state.entries[value]} callback={() => { this.handleChildChange() }}/></td>
                         </tr>
                     ))
                     }
@@ -95,13 +111,13 @@ class JournalEntryForm extends React.Component {
         return(
             <div>
                 <div>
-                    Register a new Thought
-                    <form onSubmit={this.handleSubmit}>
-                        <input type="text" name="title" placeholder="Title" /><br></br>
-                        <input type="text" name="situation" placeholder="Situation" /><br></br>
-                         <div><input type="submit" value="New Thought"/></div>
-                    </form>
+                    <Form onSubmit={this.handleSubmit}>
+                        <Form.Control type="text" name = "title" placeholder="Title"/>
+                        <Form.Control type="text" name="situation" placeholder="Situation" />
+                        <Button variant="outline-info" type="submit">Add a new Thought Journal</Button>
+                    </Form>
                 </div>
+                <br/>
                 <div>
                     {this.state.entries.length > 0 && this.renderEntries()}
                 </div>

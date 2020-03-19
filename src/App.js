@@ -62,14 +62,16 @@ class App extends React.Component {
     if(!this.state.isSignedIn){
       return(
         <div>
+          <h1>CBT</h1>
           <div>
+            
             Please log in to use CBT.
           </div>
           <GoogleLogin
           clientId="1034011358451-901ird0jj5jnle85inpimfpba5epnaqv.apps.googleusercontent.com"
           render={renderProps => (
 
-            <Button variant="outline-primary"
+            <Button variant="outline-info"
               className="button"
               onClick={renderProps.onClick}
               disabled={renderProps.disabled}
@@ -86,6 +88,7 @@ class App extends React.Component {
       console.log("we returning else")
       return(
         <div className="userDetails-wrapper">
+          <h1>CBT</h1>
         <div className="details-wrapper">
           <GoogleLogout
             render={renderProps => (
@@ -98,6 +101,7 @@ class App extends React.Component {
             )}
             onLogoutSuccess={this.logout}
           />
+          <br/>
 
           <div className="image">
             <img src={this.state.userDetails.imageUrl} />
