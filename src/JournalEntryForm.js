@@ -1,4 +1,6 @@
 import React from 'react';
+import Table from 'react-bootstrap/Table';
+import Button from 'react-bootstrap/Button';
 import axios from 'axios'
 var apiEndpoint = 'http://localhost:5000'
 
@@ -26,22 +28,22 @@ class JournalEntryForm extends React.Component {
         }else{
             var form_data = {
                 "title" : event.target.title.value,
-                "situation": event.target.situation.value,
-                "rational_response": {"rr": event.target.rational_response.value, "value": 10}
+                "situation": event.target.situation.value
+                //"rational_response": {"rr": event.target.rational_response.value, "value": 10}
             }
+            
             event.target.situation.value = ""
             event.target.title.value = ""
-            event.target.rational_response.value = ""
+            //event.target.rational_response.value = ""
             event.preventDefault()
             console.log(this.state.user)
             
             axios.post(apiEndpoint + '/journalentries/' + this.state.user,  form_data)
                 .then(res => {
                     console.log(res.data);
+                    this.fetchEntries()
                 }
             )
-    
-            this.fetchEntries()
         }
         
     }
@@ -51,20 +53,40 @@ class JournalEntryForm extends React.Component {
             .then(res => {
                 console.log(res.data)
                 if(res.data.length > 0 && res.data.length != this.state.entries.length){
-                    this.setState({entries: res.data})
+                    this.setState({entries: res.data.reverse()}, () => this.forceUpdate())
                 }
             }
         )
     }
 
+    expand = () =>{
+        console.log("poop")
+    }
+
     renderEntries = () => {
         return (
         <div>
-            {
-            Object.keys(this.state.entries).map((value,index)=>(
-                <p>title is {this.state.entries[value].title} ; situation is {this.state.entries[value].situation} ; date logged is {this.state.entries[value].date_logged}</p>
-            ))
-            }
+            <Table striped bordered hover>
+                <thead>
+                    <tr>
+                    <th>Title</th>
+                    <th>Situation</th>
+                    <th>Date Logged</th>
+                    </tr>
+                    
+                </thead>
+                <tbody>
+                    {
+                    Object.keys(this.state.entries).map((value,index)=>(
+                        <tr onClick={this.expand}>
+                            <td width="20%">{this.state.entries[value].title} </td>
+                            <td width="50%">{this.state.entries[value].situation}</td>
+                            <td width="30%">{this.state.entries[value].date_logged}</td>
+                        </tr>
+                    ))
+                    }
+                </tbody>
+            </Table>
             </div>
         )
     }
@@ -73,12 +95,11 @@ class JournalEntryForm extends React.Component {
         return(
             <div>
                 <div>
+                    Register a new Thought
                     <form onSubmit={this.handleSubmit}>
                         <input type="text" name="title" placeholder="Title" /><br></br>
                         <input type="text" name="situation" placeholder="Situation" /><br></br>
-                        <input type="text" name="rational_response" placeholder="Rational Response"/><br></br>
-                        <input type="text" name="rr_strength" placeholder="How strongly do you believe this?" pattern="/^[0-9\b]+$/"/>
-                        <div><input type = "submit" value = "Submit"/></div>
+                         <div><input type="submit" value="New Thought"/></div>
                     </form>
                 </div>
                 <div>

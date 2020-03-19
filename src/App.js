@@ -1,6 +1,7 @@
 import React from 'react';
 import GoogleLogin from "react-google-login";
 import { GoogleLogout } from "react-google-login";
+import Button from 'react-bootstrap/Button';
 import JournalEntryForm from './JournalEntryForm'
 import logo from './logo.svg';
 import './App.css';
@@ -11,18 +12,29 @@ var apiEndpoint = 'http://localhost:5000'
 class App extends React.Component {
   constructor(props){
     super(props)
+    const loggedIn = localStorage.getItem('isSignedIn') === 'true';
+    const userDeets = loggedIn ? JSON.parse(localStorage.getItem('user')) : {}
+    console.log("user shet", userDeets)
+    console.log(loggedIn);
     this.state = {
       onProfile: false,
       selectedMonth: new Date().getMonth() + 1,
       selectedYear: new Date().getFullYear(),
       data: [],
-      isSignedIn: false,
-      userDetails: {}
+      isSignedIn: loggedIn,
+      userDetails: userDeets
     }
+
+    
     //this.responseGoogle = this.responseGoogle.bind(this)
     //this.componentDidMount = this.componentDidMount.bind(this)
     //this.onSuccess = this.onSuccess.bind(this)
     //this.onSignIn = this.onSignIn.bind(this)
+  }
+
+  componentDidMount = () => {
+
+    //this.setState({isSignedIn: loggedIn, userDetails : userDeets})
   }
   
 
@@ -32,11 +44,17 @@ class App extends React.Component {
     axios.post(apiEndpoint + '/users/' + this.state.userDetails.email,  {"first_name": this.state.userDetails.givenName, "last_name": this.state.userDetails.familyName})
       .then(res => {
         console.log(res.data);
+        //localStorage.setItem('isSignedIn', true);
+        //localStorage.setItem('user', JSON.stringify(this.state.userDetails));
       })
   };
 
   logout = () => {
-    this.setState({isSignedIn: false, userDetails:{}})
+    //localStorage.setItem('isSignedIn', false);
+    //localStorage.setItem('user', {});
+    //localStorage.clear()
+    console.log("yeee")
+    this.setState({isSignedIn: false, userDetails:{}}, () => this.forceUpdate())
   };
 
   checkSignedIn = () => {
@@ -50,13 +68,14 @@ class App extends React.Component {
           <GoogleLogin
           clientId="1034011358451-901ird0jj5jnle85inpimfpba5epnaqv.apps.googleusercontent.com"
           render={renderProps => (
-            <button
+
+            <Button variant="outline-primary"
               className="button"
               onClick={renderProps.onClick}
               disabled={renderProps.disabled}
             >
               Log in with Google
-            </button>
+            </Button>
           )}
           onSuccess={this.responseGoogleSuccess}
           onFailure={this.responseGoogle}
@@ -70,12 +89,12 @@ class App extends React.Component {
         <div className="details-wrapper">
           <GoogleLogout
             render={renderProps => (
-              <button
+              <Button variant="outline-danger"
                 className="logout-button"
                 onClick={renderProps.onClick}
               >
                 Log Out
-              </button>
+              </Button>
             )}
             onLogoutSuccess={this.logout}
           />
