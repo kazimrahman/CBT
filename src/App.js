@@ -1,6 +1,7 @@
 import React from 'react';
 import GoogleLogin from "react-google-login";
 import { GoogleLogout } from "react-google-login";
+import JournalEntryForm from './JournalEntryForm'
 import logo from './logo.svg';
 import './App.css';
 import axios from 'axios'
@@ -31,38 +32,36 @@ class App extends React.Component {
     axios.post(apiEndpoint + '/users/' + this.state.userDetails.email,  {"first_name": this.state.userDetails.givenName, "last_name": this.state.userDetails.familyName})
       .then(res => {
         console.log(res.data);
-        //this.setState({ persons });
       })
-    
   };
 
   logout = () => {
     this.setState({isSignedIn: false, userDetails:{}})
   };
 
-  handleSubmit = (event) => {
-    console.log(this.state.userDetails)
-    event.preventDefault();
-  }
-
   checkSignedIn = () => {
     console.log("we in here", this.state.isSignedIn)
     if(!this.state.isSignedIn){
       return(
-        <GoogleLogin
-        clientId="1034011358451-901ird0jj5jnle85inpimfpba5epnaqv.apps.googleusercontent.com"
-        render={renderProps => (
-          <button
-            className="button"
-            onClick={renderProps.onClick}
-            disabled={renderProps.disabled}
-          >
-            Log in with Google
-          </button>
-        )}
-        onSuccess={this.responseGoogleSuccess}
-        onFailure={this.responseGoogle}
-      />
+        <div>
+          <div>
+            Please log in to use CBT.
+          </div>
+          <GoogleLogin
+          clientId="1034011358451-901ird0jj5jnle85inpimfpba5epnaqv.apps.googleusercontent.com"
+          render={renderProps => (
+            <button
+              className="button"
+              onClick={renderProps.onClick}
+              disabled={renderProps.disabled}
+            >
+              Log in with Google
+            </button>
+          )}
+          onSuccess={this.responseGoogleSuccess}
+          onFailure={this.responseGoogle}
+        />
+        </div>
       )
     }else{
       console.log("we returning else")
@@ -90,16 +89,7 @@ class App extends React.Component {
           </div>
           <div className="email"><i>{this.state.userDetails.email}</i></div>
         </div>
-
-        <div>
-          hi how are ya
-          <form onClick={this.handleSubmit}>
-            <input type="text" id="fname" name="fname"/>
-            <input type="submit" value ="Submittaroon"/>
-          </form>
-        </div>
-
-
+        <JournalEntryForm user = {this.state.userDetails}/>
         <div className="bar" />
         <div className="stand" />
       </div>
@@ -107,7 +97,6 @@ class App extends React.Component {
     }
   }
 
-  
   render(){
     return(
       <div className="App">
