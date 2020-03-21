@@ -20,14 +20,17 @@ class Delete extends React.Component {
         axios.delete(apiEndpoint + '/journalentries/' + this.state.entry.email + '/delete/' + this.state.entry._id)
             .then(res => {
                 console.log(res)
+                
                 this.props.callback()
             }
         )
+        //this.setState(reset, "true")
+
     }
 
     render(){
         return(
-            <Button variant="outline-danger" onClick={() => { this.deleteEntry() }}>X</Button>
+            <Button variant="outline-danger" onClick={() => { this.deleteEntry() }}>{this.state.entry._id}</Button>
         )
     }
 }

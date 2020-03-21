@@ -57,8 +57,9 @@ class JournalEntryForm extends React.Component {
     fetchEntries = () => {
         axios.get(apiEndpoint + '/journalentries/' + this.state.user)
             .then(res => {
-                if(res.data.length > 0 && res.data.length != this.state.entries.length){
+                if(res.data.length != this.state.entries.length){
                     this.setState({entries: res.data.reverse()}, () => this.forceUpdate())
+                    console.log(this.state.entries)
                 }
             }
         )
@@ -75,6 +76,22 @@ class JournalEntryForm extends React.Component {
         new_date = new_date.toString()
         return new_date.substring(0, new_date.indexOf("GMT"))
         //return new_date
+    }
+
+    deleteEntry = (id, email) => {
+        console.log("delete")
+        //console.log(this.state.entry)
+        //console.log(this.state.entry._id)
+        
+        axios.delete(apiEndpoint + '/journalentries/' + email + '/delete/' + id)
+            .then(res => {
+                console.log(res)
+                
+                this.fetchEntries()
+            }
+        )
+        //this.setState(reset, "true")
+
     }
 
     renderEntries = () => {
@@ -94,10 +111,10 @@ class JournalEntryForm extends React.Component {
                     {
                     Object.keys(this.state.entries).map((value,index)=>(
                         <tr>
-                            <td width="25%">{this.state.entries[value].title}</td>
-                            <td width="50%">{this.state.entries[value].situation}</td>
-                            <td width="20%">{this.prettyDate(this.state.entries[value].date_logged)}</td>
-                            <td width="5%"><Delete entry={this.state.entries[value]} callback={() => { this.handleChildChange() }}/></td>
+                            <td width="25%" onClick={() => { this.expand() }}>{this.state.entries[value]._id}</td>
+                            <td width="50%" onClick={() => { this.expand() }}>{this.state.entries[value].situation}</td>
+                            <td width="5%" onClick={() => { this.expand() }}>{this.prettyDate(this.state.entries[value].date_logged)}</td>
+                            <td width="20%"><Button variant="outline-danger" onClick={() => { this.deleteEntry(this.state.entries[value]._id, this.state.entries[value].email) }}>{this.state.entries[value]._id}</Button></td>
                         </tr>
                     ))
                     }
