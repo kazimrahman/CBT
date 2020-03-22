@@ -111,10 +111,10 @@ class JournalEntryForm extends React.Component {
                     {
                     Object.keys(this.state.entries).map((value,index)=>(
                         <tr>
-                            <td width="25%" onClick={() => { this.expand() }}>{this.state.entries[value]._id}</td>
-                            <td width="50%" onClick={() => { this.expand() }}>{this.state.entries[value].situation}</td>
-                            <td width="5%" onClick={() => { this.expand() }}>{this.prettyDate(this.state.entries[value].date_logged)}</td>
-                            <td width="20%"><Button variant="outline-danger" onClick={() => { this.deleteEntry(this.state.entries[value]._id, this.state.entries[value].email) }}>{this.state.entries[value]._id}</Button></td>
+                            <td width="25%" style={{cursor:"pointer"}} onClick={() => { this.expand() }}>{this.state.entries[value].title}</td>
+                            <td width="50%" style={{cursor:"pointer"}} onClick={() => { this.expand() }}>{this.state.entries[value].situation}</td>
+                            <td width="20%" style={{cursor:"pointer"}} onClick={() => { this.expand() }}>{this.prettyDate(this.state.entries[value].date_logged)}</td>
+                            <td width="5%"><Button variant="outline-danger" onClick={() => { this.deleteEntry(this.state.entries[value]._id, this.state.entries[value].email) }}>X</Button></td>
                         </tr>
                     ))
                     }
@@ -129,8 +129,10 @@ class JournalEntryForm extends React.Component {
             <div>
                 <div>
                     <Form onSubmit={this.handleSubmit}>
+                        <div>
                         <Form.Control type="text" name = "title" placeholder="Title"/>
                         <Form.Control type="text" name="situation" placeholder="Situation" />
+                        </div>
                         <Button variant="outline-info" type="submit">Add a new Thought Journal</Button>
                     </Form>
                 </div>
